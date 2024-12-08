@@ -1,0 +1,13 @@
+[Unit]
+Description=Home Assistant
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker start -a home-assistant
+ExecStop=/usr/bin/docker stop -t 2 home-assistant
+
+[Install]
+WantedBy=default.target
+
