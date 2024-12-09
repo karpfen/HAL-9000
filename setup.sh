@@ -40,11 +40,9 @@ mkdir -p /home/home-assistant/config
 # run home-assistant
 docker run -d \
   --name HAL-9000 \
-  --privileged \
   --restart=unless-stopped \
   -e TZ=Europe/Berlin \
-  -v /home/home-assistang/config:/config \
-  -v /run/dbus:/run/dbus:ro \
+  -v /home/home-assistant/config:/config \
   --network=host \
   ghcr.io/home-assistant/home-assistant:stable
 
