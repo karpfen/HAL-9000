@@ -51,5 +51,3 @@ cp ./utils/home-assistant.service /etc/systemd/system/home-assistant.service
 sudo systemctl daemon-reload
 sudo systemctl enable home-assistant
 sudo systemctl start home-assistant
-
-# TODO if needed, expose home-assistant to local wifi
