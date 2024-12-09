@@ -38,9 +38,6 @@ docker pull homeassistant/home-assistant
 # map config directory to local machine
 mkdir -p /home/home-assistant/config
 # run home-assistant
-docker run -d --name=HAL-9000 \
-  -v /home/home-assistant/config:/config \
-  homeassistant/home-assistant
 docker run -d \
   --name HAL-9000 \
   --privileged \
