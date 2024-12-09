@@ -38,9 +38,18 @@ docker pull homeassistant/home-assistant
 # map config directory to local machine
 mkdir -p /home/home-assistant/config
 # run home-assistant
-docker run -d --name=home-assistant \
+docker run -d --name=HAL-9000 \
   -v /home/home-assistant/config:/config \
   homeassistant/home-assistant
+docker run -d \
+  --name HAL-9000 \
+  --privileged \
+  --restart=unless-stopped \
+  -e TZ=Europe/Berlin \
+  -v /home/home-assistang/config:/config \
+  -v /run/dbus:/run/dbus:ro \
+  --network=host \
+  ghcr.io/home-assistant/home-assistant:stable
 
 # autostart docker and home-assistant
 cp ./utils/home-assistant.service /etc/systemd/system/home-assistant.service
