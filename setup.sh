@@ -49,5 +49,5 @@ docker run -d \
 # autostart docker and home-assistant
 cp ./utils/home-assistant.service /etc/systemd/system/home-assistant.service
 sudo systemctl daemon-reload
-sudo systemctl enable home-assistant
-sudo systemctl start home-assistant
+sudo systemctl enable hal-9000
+sudo systemctl start hal-9000
