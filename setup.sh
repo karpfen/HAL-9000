@@ -24,7 +24,7 @@ docker pull homeassistant/home-assistant
 mkdir -p ~/home-assistant/config
 # run home-assistant
 docker run -d \
-  --privileged
+  --privileged \
   --name HAL-9000 \
   --restart=unless-stopped \
   -e TZ=Europe/Berlin \
