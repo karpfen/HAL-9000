@@ -4,9 +4,11 @@
 sudo pacman -S openssh
 sudo systemctl enable --now sshd
 
-cp utils/sshd_config /etc/ssh/sshd_config
+sudo cp utils/sshd_config /etc/ssh/sshd_config
 sudo systemctl restart sshd.service
 sudo ufw allow ssh
+sudo ufw allow 22/tcp
+sudo ufw allow 8123/tcp
 sudo ufw enable
 
 # Install docker
@@ -34,7 +36,7 @@ docker run -d \
   ghcr.io/home-assistant/home-assistant:stable
 
 # autostart docker and home-assistant
-cp ./utils/home-assistant.service /etc/systemd/system/home-assistant.service
+sudo cp ./utils/home-assistant.service /etc/systemd/system/home-assistant.service
 sudo systemctl daemon-reload
-sudo systemctl enable hal-9000
-sudo systemctl start hal-9000
+sudo systemctl enable home-assistant.service
+sudo systemctl start home-assistant.service
