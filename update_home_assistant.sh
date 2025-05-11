@@ -1,3 +1,4 @@
+docker pull ghcr.io/home-assistant/home-assistant:stable
 docker stop HAL-9000
 docker rm HAL-9000
 
