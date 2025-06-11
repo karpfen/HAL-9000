@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  home-assistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: HAL-9000
+    privileged: true
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+    volumes:
+      - ~/home-assistant/config:/config
+      - /run/dbus:/run/dbus:ro
+    network_mode: host
+

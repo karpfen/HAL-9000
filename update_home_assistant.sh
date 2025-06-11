@@ -1,14 +1,9 @@
-docker pull ghcr.io/home-assistant/home-assistant:stable
-docker stop HAL-9000
-docker rm HAL-9000
+#!/bin/bash
 
+docker-compose pull
+
+# map config directory to local machine
+mkdir -p ~/home-assistant/config
 # run home-assistant
-docker run -d \
-  --privileged \
-  --name HAL-9000 \
-  --restart=unless-stopped \
-  -e TZ=Europe/Berlin \
-  -v ~/home-assistant/config:/config \
-  -v /run/dbus:/run/dbus:ro \
-  --network=host \
-  ghcr.io/home-assistant/home-assistant:stable
+docker-compose run -d
+
