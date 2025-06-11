@@ -14,7 +14,7 @@ sudo ufw allow 8123/tcp
 sudo ufw enable
 
 # Install docker
-sudo pacman -S docker
+sudo pacman -S docker-compose
 
 sudo systemctl start docker.service
 sudo systemctl enable docker.service
@@ -27,7 +27,7 @@ docker-compose pull
 # map config directory to local machine
 mkdir -p ~/home-assistant/config
 # run home-assistant
-docker-compose run -d
+docker-compose up -d
 
 # autostart docker and home-assistant
 sudo cp ./utils/home-assistant.service /etc/systemd/system/home-assistant.service
