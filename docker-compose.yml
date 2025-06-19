@@ -10,4 +10,23 @@ services:
       - ~/home-assistant/config:/config
       - /run/dbus:/run/dbus:ro
     network_mode: host
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:v2.8.0
+    container_name: mealie
+    restart: always
+    ports:
+        - "9925:9000"
+    deploy:
+      resources:
+        limits:
+          memory: 1000M
+    volumes:
+      - ~/mealie-data:/app/data/
+    environment:
+      ALLOW_SIGNUP: "false"
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Berlin
 
+volumes:
+  mealie-data:

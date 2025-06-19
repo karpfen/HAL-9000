@@ -26,6 +26,7 @@ docker-compose pull
 
 # map config directory to local machine
 mkdir -p ~/home-assistant/config
+mkdir -p ~/mealie-data
 # run home-assistant
 docker-compose up -d
 
