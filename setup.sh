@@ -11,6 +11,7 @@ sudo systemctl restart sshd.service
 sudo ufw allow ssh
 sudo ufw allow 22/tcp
 sudo ufw allow 8123/tcp
+sudo ufw allow 9925/tcp
 sudo ufw enable
 
 # Install docker
