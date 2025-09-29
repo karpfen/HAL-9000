@@ -10,10 +10,26 @@ services:
       - ~/home-assistant/config:/config
       - /run/dbus:/run/dbus:ro
     network_mode: host
+
+  db:
+    image: docker.io/library/postgres:17
+    container_name: postgres-db
+    restart: unless-stopped
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB_FILE=/run/secrets/postgres_db
+      - POSTGRES_USER_FILE=/run/secrets/postgres_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+    secrets:
+      - postgres_db
+      - postgres_password
+      - postgres_user
+
   mealie:
     image: ghcr.io/mealie-recipes/mealie:v2.8.0
     container_name: mealie
-    restart: always
+    restart: unless-stopped
     ports:
         - "9925:9000"
     deploy:
@@ -28,5 +44,79 @@ services:
       PGID: 1000
       TZ: Europe/Berlin
 
+  redis:
+    image: docker.io/library/redis:8
+    container_name: redis
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+
+  nextcloud:
+    image: nextcloud
+    container_name: nextcloud
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    volumes:
+      - nextcloud:/var/www/html
+    environment:
+      - NEXTCLOUD_ADMIN_PASSWORD_FILE=/run/secrets/nextcloud_admin_password
+      - NEXTCLOUD_ADMIN_USER_FILE=/run/secrets/nextcloud_admin_user
+    depends_on:
+      - db
+      - redis
+    secrets:
+      - nextcloud_admin_password
+      - nextcloud_admin_user
+      - postgres_db
+      - postgres_password
+      - postgres_user
+
+  paperless:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: paperless
+    restart: unless-stopped
+    ports:
+      - 8000:8000
+    volumes:
+      - paperless-data:/usr/src/paperless/data
+      - paperless-media:/usr/src/paperless/media
+      - ./export:/usr/src/paperless/export
+      - ./consume:/usr/src/paperless/consume
+    environment:
+#      - PAPERLESS_DBHOST=db
+      - PAPERLESS_OCR_LANGUAGE=deu+eng
+      - PAPERLESS_REDIS=redis://redis:6379
+      - PAPERLESS_TIME_ZONE=Europe/Berlin
+#      - POSTGRES_DB=paperless
+#      - POSTGRES_PASSWORD=/run/secrets/paperless_dbpass
+#      - POSTGRES_USER=paperless
+#      - USERMAP_GID=1001
+#      - USERMAP_UID=1000
+    depends_on:
+      - db
+      - redis
+    secrets:
+      - paperless_dbpass
+
 volumes:
+  db:
   mealie-data:
+  nextcloud:
+  paperless-data:
+  paperless-media:
+  redisdata:
+
+secrets:
+  nextcloud_admin_password:
+    file: ./config/nextcloud_admin_password.txt # put admin password in this file
+  nextcloud_admin_user:
+    file: ./config/nextcloud_admin_user.txt # put admin username in this file
+  paperless_dbpass:
+    file: ./config/paperless_dbpass.txt # put paperless user pw in this file
+  postgres_db:
+    file: ./config/postgres_db.txt # put postgresql db name in this file
+  postgres_password:
+    file: ./config/postgres_password.txt # put postgresql password in this file
+  postgres_user:
+    file: ./config/postgres_user.txt # put postgresql username in this file
