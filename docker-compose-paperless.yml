@@ -1,0 +1,55 @@
+services:
+  paperless-postgres-db:
+    image: docker.io/library/postgres:17
+    container_name: paperless-postgres-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - paperless-pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=paperless
+      - POSTGRES_USER=paperless
+      - POSTGRES_PASSWORD=/run/secrets/paperless_postgres_password
+
+  paperless-redis:
+    image: docker.io/library/redis:7
+    container_name: paperless-redis
+    restart: unless-stopped
+    volumes:
+      - paperless-redisdata:/data
+
+  paperless:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - paperless-data:/usr/src/paperless/data
+      - paperless-media:/usr/src/paperless/media
+      - ./export:/usr/src/paperless/export
+      - ./consume:/usr/src/paperless/consume
+    environment:
+      - PAPERLESS_REDIS=redis://paperless-redis:6379
+      - PAPERLESS_DBHOST=paperless-postgres-db
+      - PAPERLESS_OCR_LANGUAGE=deu+eng
+      - PAPERLESS_REDIS=redis://redis:6379
+      - PAPERLESS_TIME_ZONE=Europe/Berlin
+      - USERMAP_GID=1001
+      - USERMAP_UID=1000
+    depends_on:
+      - paperless-postgres-db
+      - paperless-redis
+    secrets:
+      - paperless_dbpass
+
+volumes:
+  paperless-data:
+  paperless-media:
+  paperless-pgdata:
+  paperless-redisdata:
+
+secrets:
+  paperless_dbpass:
+    file: ./config/paperless_dbpass.txt # put paperless user pw in this file
+

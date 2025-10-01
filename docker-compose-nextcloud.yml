@@ -1,0 +1,62 @@
+services:
+  nextcloud-postgres-db:
+    image: docker.io/library/postgres:17
+    container_name: nextcloud-postgres-db
+    restart: unless-stopped
+    ports:
+      - "5433:5433"
+    volumes:
+      - nextcloud-pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB_FILE=/run/secrets/nextcloud_postgres_db
+      - POSTGRES_USER_FILE=/run/secrets/nextcloud_postgres_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/nextcloud_postgres_password
+    secrets:
+      - nextcloud_postgres_db
+      - nextcloud_postgres_password
+      - nextcloud_postgres_user
+
+  nextcloud-redis:
+    image: docker.io/library/redis:8
+    container_name: nextcloud-redis
+    restart: unless-stopped
+    volumes:
+      - nextcloud-redisdata:/data
+
+  nextcloud:
+    image: docker.io/library/nextcloud:32
+    container_name: nextcloud
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    volumes:
+      - nextcloud:/var/www/html
+    environment:
+      - NEXTCLOUD_ADMIN_PASSWORD_FILE=/run/secrets/nextcloud_admin_password
+      - NEXTCLOUD_ADMIN_USER_FILE=/run/secrets/nextcloud_admin_user
+    depends_on:
+      - nextcloud-postgres-db
+      - nextcloud-redis
+    secrets:
+      - nextcloud_admin_password
+      - nextcloud_admin_user
+      - nextcloud_postgres_db
+      - nextcloud_postgres_password
+      - nextcloud_postgres_user
+
+volumes:
+  nextcloud-pgdata:
+  nextcloud-redisdata:
+  nextcloud:
+
+secrets:
+  nextcloud_admin_password:
+    file: ./config/nextcloud_admin_password.txt # put admin password in this file
+  nextcloud_admin_user:
+    file: ./config/nextcloud_admin_user.txt # put admin username in this file
+  nextcloud_postgres_db:
+    file: ./config/postgres_db.txt # put postgresql db name in this file
+  nextcloud_postgres_password:
+    file: ./config/postgres_password.txt # put postgresql password in this file
+  nextcloud_postgres_user:
+    file: ./config/postgres_user.txt # put postgresql username in this file
