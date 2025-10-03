@@ -50,9 +50,9 @@ volumes:
 
 secrets:
   nextcloud_admin_password:
-    file: ./config/nextcloud_admin.txt
+    file: ./secrets/nextcloud_admin.txt
   nextcloud_pg_postgres_password:
-    file: ./config/nextcloud_pg_postgres.txt
+    file: ./secrets/nextcloud_pg_postgres.txt
   nextcloud_pg_nextcloud_password:
-    file: ./config/nextcloud_pg_nextcloud.txt
+    file: ./secrets/nextcloud_pg_nextcloud.txt
 
