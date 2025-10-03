@@ -42,7 +42,6 @@ services:
     secrets:
       - nextcloud_admin_password
       - nextcloud_pg_nextcloud_password
-      - nextcloud_pg_postgres_password
 
 volumes:
   nextcloud-pgdata:
