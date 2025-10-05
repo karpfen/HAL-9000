@@ -5,8 +5,10 @@
 #	-f docker_compose/nextcloud.yml \
 #	-f docker_compose/paperless.yml \
 docker-compose \
-	-f docker_compose/nextcloud.yml \
-	up 
-
-
+	-f home-assistant.yml \
+	-f mealie.yml \
+	-f nextcloud.yml \
+	-f paperless.yml \
+	up \
+	-d
 

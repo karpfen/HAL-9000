@@ -29,6 +29,7 @@ services:
       - 8080:80
     volumes:
       - nextcloud:/var/www/html
+      - ./consume:/paperless_consume
     environment:
       - POSTGRES_DATABASE=nextcloud
       - POSTGRES_HOST=nextcloud-postgres-db

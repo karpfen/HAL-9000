@@ -1,10 +1,10 @@
 #!/bin/bash
 
 docker-compose \
-	-f docker_compose/home-assistant.yml \
-	-f docker_compose/mealie.yml \
-	-f docker_compose/nextcloud.yml \
-	-f docker_compose/paperless.yml \
+	-f home-assistant.yml \
+	-f mealie.yml \
+	-f nextcloud.yml \
+	-f paperless.yml \
 	down \
 	--remove-orphans
 
