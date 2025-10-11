@@ -1,0 +1,13 @@
+[Unit]
+Description=Fix ownership and permissions on external drive
+After=local-fs.target
+Requires=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/chown -R 33:33 /mnt/terramaster/
+ExecStartPost=/bin/chmod -R 777 /mnt/terramaster/
+
+[Install]
+WantedBy=multi-user.target
+
