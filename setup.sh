@@ -39,3 +39,10 @@ sudo systemctl start home-assistant.service
 
 # configure hdd
 sudo cp ./utils/69-hdparm.rules /etc/udev/rules.d/
+
+# install nightly backup timer (see backup/README.md)
+sed "s#__REPO_DIR__#$(pwd)#g" utils/hal-9000-backup.service | sudo tee /etc/systemd/system/hal-9000-backup.service >/dev/null
+sudo cp ./utils/hal-9000-backup.timer /etc/systemd/system/hal-9000-backup.timer
+sudo systemctl daemon-reload
+sudo systemctl enable --now hal-9000-backup.timer
+
