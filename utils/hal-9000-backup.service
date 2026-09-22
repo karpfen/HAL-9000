@@ -1,0 +1,8 @@
+[Unit]
+Description=HAL-9000 backup (home-assistant, mealie, paperless)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=__REPO_DIR__/backup/backup.sh all
