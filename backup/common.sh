@@ -144,6 +144,9 @@ backup_paperless() {
 
 restore_paperless() {
 	local snapshot_path="$1"
+	local pgdata_dest pgdata_owner
+	pgdata_dest="$(volume_path pgdata)"
+	pgdata_owner="$(stat -c '%u:%g' "$pgdata_dest")"
 
 	confirm "This will REPLACE all current paperless data with the backup at $snapshot_path."
 	docker-compose -f "$PAPERLESS_COMPOSE_FILE" stop
@@ -152,6 +155,12 @@ restore_paperless() {
 		dest="$(volume_path "$vol")"
 		rsync -a --delete "$snapshot_path/$vol"/ "$dest"/
 	done
+	# Postgres refuses to start unless its data dir is private. Backup
+	# snapshots on /mnt/terramaster can have their permissions clobbered by
+	# the nightly storage-permissions fixup, so restore what postgres itself
+	# had before we overwrote it, regardless of the snapshot's own bits.
+	chown -R "$pgdata_owner" "$pgdata_dest"
+	chmod -R 700 "$pgdata_dest"
 	docker-compose -f "$PAPERLESS_COMPOSE_FILE" start
 	log "paperless restored from $snapshot_path"
 }
