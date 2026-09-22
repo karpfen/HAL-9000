@@ -37,3 +37,5 @@ sudo systemctl daemon-reload
 sudo systemctl enable home-assistant.service
 sudo systemctl start home-assistant.service
 
+# configure hdd
+sudo cp ./utils/69-hdparm.rules /etc/udev/rules.d/

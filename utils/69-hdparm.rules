@@ -1,0 +1,1 @@
+ACTION=="add", KERNEL=="sd[a-z]", ENV{ID_SERIAL_SHORT}=="69B0A0CCF94G", RUN+="/usr/bin/hdparm -B 127 -S 240 /dev/%k"
