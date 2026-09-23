@@ -45,6 +45,7 @@ services:
       - PAPERLESS_TIME_ZONE=Europe/Berlin
       - USERMAP_GID=33
       - USERMAP_UID=33
+      - PAPERLESS_SECRET_KEY=${PAPERLESS_SECRET_KEY:?PAPERLESS_SECRET_KEY must be set in .env}
   paperless-gotenberg:
     image: docker.io/gotenberg/gotenberg:8.22
     container_name: paperless-gotenberg

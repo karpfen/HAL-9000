@@ -5,8 +5,8 @@ Requires=docker.service
 
 [Service]
 Restart=always
-ExecStart=/usr/bin/docker start -a hal-9000
-ExecStop=/usr/bin/docker stop -t 2 hal-9000
+ExecStart=/usr/bin/docker start -a HAL-9000
+ExecStop=/usr/bin/docker stop -t 2 HAL-9000
 
 [Install]
 WantedBy=default.target

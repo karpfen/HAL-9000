@@ -10,10 +10,12 @@ RETENTION_DAYS="${RETENTION_DAYS:-30}"
 # docker-compose derives its project name from the containing directory.
 PROJECT_NAME="$(basename "$REPO_DIR" | tr '[:upper:]' '[:lower:]')"
 
-# These scripts run as root (via sudo), so "~" would resolve to /root rather
-# than the home directory the bind mounts actually live in. Resolve the home
-# of the user who ran sudo instead.
-TARGET_USER="${SUDO_USER:-$USER}"
+# These scripts run as root (via sudo, or directly as root from the
+# hal-9000-backup.service systemd unit), so "~"/$USER would resolve to /root
+# rather than the home directory the bind mounts actually live in. Resolve the
+# home of the user who owns the repo checkout instead - that works both when
+# invoked interactively via sudo and when systemd runs it directly as root.
+TARGET_USER="${SUDO_USER:-$(stat -c '%U' "$REPO_DIR")}"
 TARGET_HOME="$(getent passwd "$TARGET_USER" | cut -d: -f6)"
 HOME_ASSISTANT_DIR="$TARGET_HOME/home-assistant/config"
 MEALIE_DIR="$TARGET_HOME/mealie-data"
