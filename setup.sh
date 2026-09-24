@@ -28,6 +28,23 @@ docker-compose pull
 # map config directory to local machine
 mkdir -p ~/home-assistant/config
 mkdir -p ~/mealie-data
+
+# Install HACS (Home Assistant Community Store) so community integrations
+# (e.g. the Dreame vacuum integration) can be installed through its UI.
+# Only bootstraps the files - HACS updates itself through its own UI after
+# that, so this is skipped once it's already present rather than
+# re-downloading "latest" on every setup.sh run.
+sudo pacman -S unzip
+
+HACS_DIR="$HOME/home-assistant/config/custom_components/hacs"
+if [ ! -d "$HACS_DIR" ]; then
+	tmpdir="$(mktemp -d)"
+	curl -sL "https://github.com/hacs/integration/releases/latest/download/hacs.zip" -o "$tmpdir/hacs.zip"
+	mkdir -p "$HACS_DIR"
+	unzip -q "$tmpdir/hacs.zip" -d "$HACS_DIR"
+	rm -rf "$tmpdir"
+fi
+
 # run home-assistant
 docker-compose up -d
 
