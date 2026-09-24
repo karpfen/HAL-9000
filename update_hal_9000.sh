@@ -5,6 +5,8 @@ docker-compose \
 	-f mealie.yml \
 	-f nextcloud.yml \
 	-f paperless.yml \
+	-f pocket-id.yml \
+	-f caddy.yml \
 	pull
 
 docker-compose \
@@ -12,6 +14,8 @@ docker-compose \
 	-f mealie.yml \
 	-f nextcloud.yml \
 	-f paperless.yml \
+	-f pocket-id.yml \
+	-f caddy.yml \
 	up \
 	-d
 

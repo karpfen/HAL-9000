@@ -1,7 +1,8 @@
 # Backups
 
-Nightly incremental backups of home-assistant, mealie and paperless to
-`/mnt/terramaster/backups` (visible through Nextcloud's external storage).
+Nightly incremental backups of home-assistant, mealie, paperless and
+nextcloud to `/mnt/terramaster/backups` (visible through Nextcloud's external
+storage).
 
 ## How it works
 

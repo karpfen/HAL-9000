@@ -46,6 +46,17 @@ services:
       - USERMAP_GID=33
       - USERMAP_UID=33
       - PAPERLESS_SECRET_KEY=${PAPERLESS_SECRET_KEY:?PAPERLESS_SECRET_KEY must be set in .env}
+      # Pocket ID SSO. Does NOT auto-link by claim: a user must first log in
+      # with their existing local password, then connect their Pocket ID
+      # account under My Profile. ALLOW_SIGNUPS=false blocks OIDC login from
+      # ever creating a brand-new account on its own.
+      - PAPERLESS_APPS=allauth.socialaccount.providers.openid_connect
+      - PAPERLESS_SOCIALACCOUNT_ALLOW_SIGNUPS=false
+      # Caddy terminates TLS and forwards plain HTTP to this container, so
+      # without this, Paperless would think every request is plain HTTP and
+      # build the wrong (http, not https) OIDC callback URL, breaking login.
+      - PAPERLESS_PROXY_SSL_HEADER=["HTTP_X_FORWARDED_PROTO", "https"]
+      - PAPERLESS_SOCIALACCOUNT_PROVIDERS={"openid_connect":{"SCOPE":["openid","profile","email"],"OAUTH_PKCE_ENABLED":true,"APPS":[{"provider_id":"pocket-id","name":"Pocket-ID","client_id":"${PAPERLESS_OIDC_CLIENT_ID:?PAPERLESS_OIDC_CLIENT_ID must be set in .env}","secret":"${PAPERLESS_OIDC_CLIENT_SECRET:?PAPERLESS_OIDC_CLIENT_SECRET must be set in .env}","settings":{"server_url":"https://hal9000.lan:8443"}}]}}
   paperless-gotenberg:
     image: docker.io/gotenberg/gotenberg:8.22
     container_name: paperless-gotenberg

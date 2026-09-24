@@ -144,6 +144,59 @@ backup_paperless() {
 	log "paperless done ($snapshot)"
 }
 
+# Nextcloud stores its data in named docker volumes rather than bind mounts,
+# so it gets the same volume-snapshot treatment as paperless.
+NEXTCLOUD_VOLUMES="nextcloud nextcloud-pgdata nextcloud-redisdata"
+NEXTCLOUD_COMPOSE_FILE="$REPO_DIR/nextcloud.yml"
+
+backup_nextcloud() {
+	local dest_root="$BACKUP_ROOT/nextcloud"
+	local snapshot="$dest_root/$(date +%Y-%m-%d_%H%M%S)"
+	local latest_link="$dest_root/latest"
+
+	log "Backing up nextcloud..."
+	docker-compose -f "$NEXTCLOUD_COMPOSE_FILE" stop
+
+	mkdir -p "$snapshot"
+	for vol in $NEXTCLOUD_VOLUMES; do
+		local src
+		src="$(volume_path "$vol")"
+		mkdir -p "$snapshot/$vol"
+		if [ -d "$latest_link/$vol" ]; then
+			rsync -a --delete --link-dest="$latest_link/$vol" "$src"/ "$snapshot/$vol"/
+		else
+			rsync -a "$src"/ "$snapshot/$vol"/
+		fi
+	done
+
+	docker-compose -f "$NEXTCLOUD_COMPOSE_FILE" start
+	ln -sfn "$(basename "$snapshot")" "$latest_link"
+	prune_old_snapshots "$dest_root"
+	log "nextcloud done ($snapshot)"
+}
+
+restore_nextcloud() {
+	local snapshot_path="$1"
+	local pgdata_dest pgdata_owner
+	pgdata_dest="$(volume_path nextcloud-pgdata)"
+	pgdata_owner="$(stat -c '%u:%g' "$pgdata_dest")"
+
+	confirm "This will REPLACE all current nextcloud data with the backup at $snapshot_path."
+	docker-compose -f "$NEXTCLOUD_COMPOSE_FILE" stop
+	for vol in $NEXTCLOUD_VOLUMES; do
+		local dest
+		dest="$(volume_path "$vol")"
+		rsync -a --delete "$snapshot_path/$vol"/ "$dest"/
+	done
+	# Same reasoning as paperless's pgdata restore: postgres refuses to start
+	# unless its data dir is private, and snapshot permissions can get
+	# clobbered by the nightly storage-permissions fixup.
+	chown -R "$pgdata_owner" "$pgdata_dest"
+	chmod -R 700 "$pgdata_dest"
+	docker-compose -f "$NEXTCLOUD_COMPOSE_FILE" start
+	log "nextcloud restored from $snapshot_path"
+}
+
 restore_paperless() {
 	local snapshot_path="$1"
 	local pgdata_dest pgdata_owner
