@@ -1,0 +1,33 @@
+# Fronts every service under one local hostname (see docs/pocket-id-user-guide.md
+# for the one-time hosts-file entry each client device needs), issuing its own
+# self-signed certificate per site via Caddy's internal CA (`tls internal`) -
+# there is no public domain here, and none is required for this to work.
+#
+# Each block proxies to the app's existing plain-HTTP port on localhost;
+# those ports keep working directly and unencrypted exactly as before, this
+# just adds an HTTPS-fronted path used for Pocket ID SSO login.
+
+hal9000.lan:8443 {
+	tls internal
+	reverse_proxy localhost:1411
+}
+
+hal9000.lan:18123 {
+	tls internal
+	reverse_proxy localhost:8123
+}
+
+hal9000.lan:19925 {
+	tls internal
+	reverse_proxy localhost:9925
+}
+
+hal9000.lan:18000 {
+	tls internal
+	reverse_proxy localhost:8000
+}
+
+hal9000.lan:18080 {
+	tls internal
+	reverse_proxy localhost:8080
+}

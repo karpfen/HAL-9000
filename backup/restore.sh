@@ -2,7 +2,7 @@
 # Restores a previous backup created by backup.sh. Overwrites live data in
 # place, so it asks for confirmation unless --yes is given.
 #
-# Usage: restore.sh <home-assistant|mealie|paperless> [snapshot-name] [--yes]
+# Usage: restore.sh <home-assistant|mealie|paperless|nextcloud> [snapshot-name] [--yes]
 #   snapshot-name defaults to "latest". Run without a valid one to list
 #   available snapshots for that service.
 set -euo pipefail
@@ -27,7 +27,7 @@ SERVICE="${args[0]:-}"
 SNAPSHOT_NAME="${args[1]:-latest}"
 
 if [ -z "$SERVICE" ]; then
-	echo "Usage: $0 <home-assistant|mealie|paperless> [snapshot-name] [--yes]" >&2
+	echo "Usage: $0 <home-assistant|mealie|paperless|nextcloud> [snapshot-name] [--yes]" >&2
 	exit 1
 fi
 
@@ -44,8 +44,12 @@ paperless)
 	snapshot="$(resolve_snapshot "paperless" "$SNAPSHOT_NAME")"
 	restore_paperless "$snapshot"
 	;;
+nextcloud)
+	snapshot="$(resolve_snapshot "nextcloud" "$SNAPSHOT_NAME")"
+	restore_nextcloud "$snapshot"
+	;;
 *)
-	echo "Usage: $0 <home-assistant|mealie|paperless> [snapshot-name] [--yes]" >&2
+	echo "Usage: $0 <home-assistant|mealie|paperless|nextcloud> [snapshot-name] [--yes]" >&2
 	exit 1
 	;;
 esac

@@ -16,6 +16,22 @@ services:
       PUID: 1000
       PGID: 1001
       TZ: Europe/Berlin
+      # Pocket ID SSO. Existing local accounts are untouched; this only adds
+      # an OIDC login option. OIDC_SIGNUP_ENABLED=false means an OIDC login
+      # for an email that doesn't already match an existing account fails
+      # rather than silently creating a new one.
+      OIDC_AUTH_ENABLED: "true"
+      OIDC_SIGNUP_ENABLED: "false"
+      OIDC_CONFIGURATION_URL: "https://hal9000.lan:8443/.well-known/openid-configuration"
+      OIDC_CLIENT_ID: ${MEALIE_OIDC_CLIENT_ID:?MEALIE_OIDC_CLIENT_ID must be set in .env}
+      OIDC_CLIENT_SECRET: ${MEALIE_OIDC_CLIENT_SECRET:?MEALIE_OIDC_CLIENT_SECRET must be set in .env}
+      OIDC_USER_CLAIM: email
+      # Mealie (v2.8.0) runs uvicorn directly, not Gunicorn, and defaults
+      # HOST_IP (forwarded_allow_ips) to "*" already - so unlike Paperless
+      # and Mealie's own (outdated) docs suggest, no extra forwarded-proxy
+      # setting is needed here for the OIDC redirect URI scheme to come out
+      # as https. Re-verify this default hasn't changed if the pinned image
+      # tag above is ever bumped.
 
 volumes:
   mealie-data:
